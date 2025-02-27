@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes oneWayColorWave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.animate-one-way-color-wave {
+  animation: oneWayColorWave 8s linear infinite;
+}
+
+.x-gradient-font {
+  background: linear-gradient(107.54deg, #0078d4 .39%, #8661c5 51.23%, #ff9349 100%, #ff6b00 120%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

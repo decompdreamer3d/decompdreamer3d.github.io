@@ -50,9 +50,9 @@ export function VideoGrid({ videos, onVideoSelect }: VideoGridProps) {
               className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden cursor-pointer transition-all duration-200 transform hover:scale-105"
               onClick={() => onVideoSelect(video)}
             >
-              <div className="relative pb-[56.25%]">
+              <div className="w-full aspect-video bg-gray-100 overflow-hidden">
                 <video
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                   src={video.mainVideoUrl}
                   autoPlay
                   muted

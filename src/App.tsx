@@ -1,6 +1,7 @@
 import React from 'react';
 import { Title } from './components/Title';
 import { TeaserSection } from './components/TeaserSection';
+import { PipelineImage } from './components/PipelineImage';
 import { VideoGrid } from './components/VideoGrid';
 import { Dialog } from './components/Dialog';
 import { ComparisonDialog } from './components/ComparisonDialog';
@@ -8,7 +9,10 @@ import { ComparisonSection } from './components/ComparisonSection';
 import { AbstractSection } from './components/sections/AbstractSection';
 import { MotivationSection } from './components/sections/MotivationSection';
 import { MethodologySection } from './components/sections/MethodologySection';
-import { teaserVideo, videoData } from './data/videoData';
+import { GradientConflictSection } from './components/sections/GradientConflictSection';
+import { QuantitativeComparisonSection } from './components/sections/QuantitativeComparisonSection';
+import { Footer } from './components/Footer';
+import { videoData, teaserData } from './data/videoData';
 import { comparisonData } from './data/comparisonData';
 
 function App() {
@@ -16,28 +20,46 @@ function App() {
   const [selectedComparison, setSelectedComparison] = React.useState<typeof comparisonData[0] | null>(null);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+    <div className="min-h-screen bg-white flex flex-col">
+      <div className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
         <Title />
         
-        <TeaserSection 
-          teaserVideo={teaserVideo} 
-          onVideoSelect={setSelectedVideo} 
-        />
+        <TeaserSection {...teaserData} />
+        
+        {/* <PipelineImage 
+          imageUrl="/images/ICCV_MAIN.png"
+          altText="DecompDreamer Pipeline Overview"
+        /> */}
 
         <AbstractSection />
-        <MotivationSection />
-        <MethodologySection />
+        {/* <MotivationSection /> */}
+        {/* <MethodologySection /> */}
+        <MethodologySection 
+          imageUrl="/images/website_main_figure.png"
+          altText="DecompDreamer Pipeline Overview"
+        />
+
+        <GradientConflictSection 
+          imageUrl="/images/plots.png"
+          altText="Gradient Conflict Quantification"
+        />
+
+        <QuantitativeComparisonSection 
+          imageUrl="/images/quant_comp.png"
+          altText="Quantitative Comparison Table"
+        />
 
         <ComparisonSection 
-          onComparisonSelect={setSelectedComparison} 
+          // onComparisonSelect={setSelectedComparison} 
         />
 
-        <VideoGrid 
+        {/* <VideoGrid 
           videos={videoData} 
           onVideoSelect={setSelectedVideo} 
-        />
+        /> */}
       </div>
+
+      <Footer />
 
       {selectedVideo && (
         <Dialog
@@ -54,7 +76,7 @@ function App() {
           isOpen={!!selectedComparison}
           onClose={() => setSelectedComparison(null)}
           title={selectedComparison.title}
-          description={selectedComparison.description}
+          // description={selectedComparison.description}
           subVideos={selectedComparison.subVideos}
         />
       )}

@@ -1,120 +1,133 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ContentSection } from './ContentSection';
 import { comparisonData } from '../data/comparisonData';
 
-interface ComparisonSectionProps {
-  onComparisonSelect: (comparison: typeof comparisonData[0]) => void;
-}
+export const ComparisonSection = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
 
-export function ComparisonSection({ onComparisonSelect }: ComparisonSectionProps) {
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const comparisonsPerPage = 1;
-  const totalPages = Math.ceil(comparisonData.length / comparisonsPerPage);
-
-  const getCurrentPageComparisons = () => {
-    const start = currentPage * comparisonsPerPage;
-    return comparisonData.slice(start, start + comparisonsPerPage);
+  const handlePrevClick = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? comparisonData.length - 1 : prevIndex - 1
+    );
   };
 
-  const nextPage = () => {
-    setCurrentPage((prev) => (prev + 1) % totalPages);
+  const handleNextClick = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === comparisonData.length - 1 ? 0 : prevIndex + 1
+    );
   };
 
-  const prevPage = () => {
-    setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
-  };
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        handlePrevClick();
+      } else if (event.key === 'ArrowRight') {
+        handleNextClick();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
+  const currentComparison = comparisonData[currentIndex];
 
   return (
-    <div className="w-full max-w-7xl mx-auto mb-16">
-      <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 x-gradient-font">
-        Comparison
-      </h2>
-      
-      <div className="relative">
-        <div className="space-y-8">
-          {getCurrentPageComparisons().map((comparison) => (
-            <div 
-              key={comparison.id}
-              className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden cursor-pointer transition-all duration-200 transform hover:scale-105"
-              onClick={() => onComparisonSelect(comparison)}
-            >
-              <div className="grid grid-cols-2 gap-4 p-4">
-                {/* GraphDreamer Video */}
-                <div className="space-y-2">
-                  <div className="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden">
-                    <video
-                      className="w-full h-full object-cover"
-                      src={comparison.graphDreamer.videoUrl}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                    />
-                  </div>
-                  <p className="text-center font-medium text-gray-700">
-                    {comparison.graphDreamer.title}
-                  </p>
-                </div>
-
-                {/* DecompDreamer Video */}
-                <div className="space-y-2">
-                  <div className="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden">
-                    <video
-                      className="w-full h-full object-cover"
-                      src={comparison.decompDreamer.videoUrl}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                    />
-                  </div>
-                  <p className="text-center font-medium text-gray-700">
-                    {comparison.decompDreamer.title}
-                  </p>
-                </div>
-              </div>
-              <div className="p-4 border-t">
-                <p className="font-medium text-gray-800 mb-2">{comparison.title}</p>
-                <p className="text-sm text-gray-600">
-                  {comparison.description}
-                </p>
-              </div>
-            </div>
-          ))}
+    <section className="py-12">
+      <div className="w-full max-w-none mx-auto px-0 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <ContentSection 
+            title="Qualitative Comparisons" 
+            gradientFrom="rose-400" 
+            gradientVia="blue-500" 
+            gradientTo="purple-500"
+          />
+          <p className="text-2xl bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent font-semibold -mt-12">
+            {currentComparison.title}
+          </p>
         </div>
 
-        {totalPages > 1 && (
-          <>
-            <button
-              onClick={prevPage}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 bg-[#6366F1] text-white rounded-full p-2 shadow-lg hover:bg-[#4F46E5] transition-colors"
-              aria-label="Previous page"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            <button
-              onClick={nextPage}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 bg-[#6366F1] text-white rounded-full p-2 shadow-lg hover:bg-[#4F46E5] transition-colors"
-              aria-label="Next page"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
+        <div className="relative">
+          <button
+            onClick={handlePrevClick}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 bg-[#6366F1] text-white rounded-full p-2 shadow-lg hover:bg-[#4F46E5] transition-colors"
+            aria-label="Previous page"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
 
-            <div className="flex justify-center items-center space-x-2 mt-8">
-              {Array.from({ length: totalPages }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index)}
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    currentPage === index ? 'bg-[#6366F1]' : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                  aria-label={`Go to page ${index + 1}`}
-                />
-              ))}
+          <div className="grid grid-cols-7 gap-2 mx-auto">
+            {/* Main video - DecompDreamer */}
+            <div className="relative">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full rounded-lg shadow-lg object-cover"
+                src={currentComparison.decompDreamer.videoUrl}
+              />
+              <div className="mt-2 text-lg font-semibold text-center text-gray-800">
+                <p className="text-center text-m">{currentComparison.decompDreamer.title}</p>
+              </div>
             </div>
-          </>
-        )}
+
+            {/* Main video - GraphDreamer */}
+            <div className="relative">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full rounded-lg shadow-lg object-cover"
+                src={currentComparison.graphDreamer.videoUrl}
+              />
+              <div className="mt-2 text-lg font-semibold text-center text-gray-800">
+                <p className="text-center text-m">{currentComparison.graphDreamer.title}</p>
+              </div>
+            </div>
+
+            {/* Sub videos */}
+            {currentComparison.subVideos.map((subVideo, index) => (
+              <div key={index} className="relative">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full rounded-lg shadow-lg object-cover"
+                  src={subVideo.videoUrl}
+                />
+                <div className="mt-2 text-lg font-semibold text-center text-gray-800">
+                  <p className="text-center text-m">{subVideo.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={handleNextClick}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 bg-[#6366F1] text-white rounded-full p-2 shadow-lg hover:bg-[#4F46E5] transition-colors"
+            aria-label="Next page"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="flex justify-center mt-20 gap-2">
+          {comparisonData.map((_, index) => (
+            <button
+              key={index}
+              className={`w-2.5 h-2.5 rounded-full ${
+                index === currentIndex ? 'bg-blue-600' : 'bg-gray-300'
+              }`}
+              onClick={() => setCurrentIndex(index)}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
-}
+};
